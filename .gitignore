@@ -1,1 +1,12 @@
-.*/
+# Ignore the hidden dependency and cache
+.venv
+.env
+.ropeproject
+.ruff_cache
+
+# Ignore the backend dependency and cache
+__pycache__
+**/__pycache__
+db.sqlite3
+migrations
+**/migrations
