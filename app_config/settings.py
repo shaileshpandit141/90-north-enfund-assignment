@@ -33,6 +33,9 @@ INSTALLED_APPS += [
     "rest_framework",
     "corsheaders",
     "channels",
+    "user_auth_app",
+    "google_drive_app",
+    "user_chat_app",
 ]
 
 MIDDLEWARE = [
