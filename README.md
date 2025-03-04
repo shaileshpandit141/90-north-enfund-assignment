@@ -14,8 +14,8 @@ The backend is built using Django, Django REST Framework, Django Channels, and G
 
 ### **1️⃣ Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/backend-project.git
-cd backend-project
+git clone https://github.com/shaileshpandit141/90-north-enfund-assignment.git
+cd 90-north-enfund-assignment
 ```
 
 ### **2️⃣ Create a Virtual Environment**
