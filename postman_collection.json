@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "2735557b-605f-452e-a5c3-65245c3c4e04",
+		"name": "90 North Enfund Assignment",
+		"description": "# 📘 Postman Collection Documentation For 90 North enfund.io Assignment\n\n## 📌 Overview\n\nThis Postman collection allows you to test all API endpoints of the backend system, including:\n\n- **Google OAuth 2.0 Authentication**\n    \n- **Google Drive API (Upload, Fetch, Download)**\n    \n- **WebSocket Real-time Chat**\n    \n\nThe collection is structured to simplify authentication and testing, ensuring smooth API interaction.\n\n---\n\n## 🚀 How to Import Postman Collection\n\n1. **Download the Postman Collection JSON**\n    \n    - The collection file is named `postman_collection.json`.\n        \n2. **Open Postman**\n    \n    - Navigate to `File > Import` or click `Import` in the Postman UI.\n        \n3. **Select the** **`postman_collection.json`** **file**\n    \n    - Click `Open` and import the collection.\n        \n4. **Set Up Environment Variables**\n    \n    - Go to `Environments` in Postman and create a new environment.\n        \n    - base_url = [http://127.0.0.1:8000](http://127.0.0.1:8000)\n        \n\n---\n\n## 📌 API Requests in Postman Collection\n\n### **1️⃣ Google OAuth 2.0 Authentication**\n\n| Method | Endpoint | Description |\n| --- | --- | --- |\n| `GET` | `{{base_url}}/api/v1/auth/google/` | Get Google OAuth login URL |\n| `GET` | `{{base_url}}/api/v1/auth/google/callback/` | Handle Google OAuth callback & return user info |\n\n- **Step 1:** Open `Get Google OAuth URL` and send a request.\n    \n- **Step 2:** Copy the authentication URL and log in.\n    \n- **Step 3:** Exchange the authorization code for tokens using the `Google Callback` request.\n    \n- **Step 4:** Copy the returned `access_token` and use it for feature request.\n    \n\n---\n\n### **2️⃣ Google Drive API**\n\n| Method | Endpoint | Description |\n| --- | --- | --- |\n| `POST` | `{{base_url}}/api/v1/google/drive/upload/` | Upload a file to Google Drive |\n| `GET` | `{{base_url}}/api/v1/google/drive/list/` | Fetch list of user’s Google Drive files |\n| `GET` | `{{base_url}}/api/v1/google/drive/list/{{file_id}}/` | View and Download a single file from Google Drive |\n\n#### **Uploading a File to Google Drive**\n\n- Open `Upload File to Drive` request.\n    \n- Select a file in `form-data` under the `file` key.\n    \n- Click `Send` to upload.\n    \n- Copy the `file_id` from the response and store it in Postman for future requests.\n    \n\n#### **Fetching Files from Google Drive**\n\n- Open `Fetch Google Drive Files` request.\n    \n- Send the request to retrieve a list of available files.\n    \n\n#### **Downloading a File from Google Drive**\n\n- Open `Download File from Drive` request.\n    \n- Replace `{{file_id}}` with an actual file ID retrieved from the list.\n    \n- Click `Send` to get download file link.\n    \n\n---\n\n### **3️⃣ WebSocket Chat (Real-time Messaging)**\n\n| WebSocket | Endpoint | Description |\n| --- | --- | --- |\n| `WS` | `ws://127.0.0.1:8000/ws/v1/chat/?token={{access_token}}` | Real-time chat connection |\n\n#### **Connecting to WebSocket Chat in Postman**\n\n1. **Open Postman and click** **`New`** **\\>** **`WebSocket Request`****.**\n    \n2. ws://127.0.0.1:8000/ws/v1/chat/?token={{access_token}}\n    \n3. **Click** **`Connect`****.**\n    \n4. { \"message\": \"Hello from Postman!\" }\n    \n5. **Receive messages from other users in real-time.**\n    \n\n---\n\n## 🧪 Common Errors & Troubleshooting\n\n| Error | Cause | Solution |\n| --- | --- | --- |\n| `401 Unauthorized` | Invalid or expired OAuth token | Refresh the token and update it in Postman variables |\n| `403 Forbidden` | Missing Google API permissions | Ensure Drive API is enabled in Google Cloud Console |\n| `Connection Refused` | WebSocket server is not running | Restart Django server using  <br>python3 manage.py runserver |\n\n---\n\n## 🎯 Summary\n\n- **Google OAuth 2.0** enables secure authentication.\n    \n- **Google Drive API** allows users to manage their files.\n    \n- **WebSockets** provide real-time chat functionality.\n    \n- **Postman Collection** makes API testing simple and efficient.\n    \n\n### ✅ **Now you’re ready to test all features!** 🚀",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32876258"
+	},
+	"item": [
+		{
+			"name": "google Sign in endpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/google/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"google",
+						""
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "upload file to drive",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<access_token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "product-image.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/google/drive/upload/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"google",
+						"drive",
+						"upload",
+						""
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "google drive file list",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<access_token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/google/drive/list/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"google",
+						"drive",
+						"list",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "google drive file detail and download",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<access_token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/google/drive/list/1w9L9oEBtnmSc2sYGRK_sgBe5TzcIDhyUGK_ZQ/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"google",
+						"drive",
+						"list",
+						"1w9L9oEBtnmSc2sYGRK_sgBe5TzcIDhyUGK_ZQ",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		}
+	]
+}
