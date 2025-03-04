@@ -47,3 +47,42 @@ class GoogleDriveFileListView(BaseAPIView):
                     }
                 ],
             )
+
+
+class GoogleDriveFileDetailView(BaseAPIView):
+    def get(self, request, file_id: str) -> Response:
+        """Fetch details of a specific file from Google Drive, including a viewable link."""
+        try:
+            access_token = request.headers.get("Authorization")
+            if not access_token:
+                raise Exception("Missing access token")
+
+            # Initialize credentials
+            credentials = Credentials(token=access_token.replace("Bearer ", ""))
+
+            drive_service = build("drive", "v3", credentials=credentials)
+
+            # Fetch file details, including URLs
+            file_metadata: Dict[str, Any] = (
+                drive_service.files()
+                .get(
+                    fileId=file_id,
+                    fields="id, name, mimeType, size, createdTime, modifiedTime, webViewLink, webContentLink",
+                )
+                .execute()
+            )
+
+            return self.handle_success(
+                "File details fetched successfully.", file_metadata
+            )
+        except Exception as error:
+            return self.handle_error(
+                "File details request failed.",
+                [
+                    {
+                        "field": "none",
+                        "code": "google_drive",
+                        "message": str(error),
+                    }
+                ],
+            )
