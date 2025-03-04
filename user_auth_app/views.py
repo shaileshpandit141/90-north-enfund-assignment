@@ -32,3 +32,51 @@ class GoogleAuthView(BaseAPIView):
                 "auth_url": auth_url,
             },
         )
+
+
+class GoogleCallbackView(BaseAPIView):
+    def get(self, request, *args, **kwargs) -> Response:
+        code = request.GET.get("code")
+        if not code:
+            return self.handle_error(
+                "Your request was not successful.",
+                [
+                    {
+                        "field": "code",
+                        "code": "invalid_code",
+                        "message": "Opp's missing code params",
+                    }
+                ],
+            )
+
+        try:
+            google_payload = {
+                "code": code,
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            }
+            google_response = requests.post(GOOGLE_TOKEN_URL, data=google_payload)
+            tokens = google_response.json()
+            headers = {"Authorization": f"Bearer {tokens.get('access_token')}"}
+            user_info = requests.get(GOOGLE_USER_INFO_URL, headers=headers).json()
+
+            return self.handle_success(
+                "Sign in request was successful",
+                {
+                    "user": user_info,
+                    "tokens": tokens,
+                },
+            )
+        except Exception as error:
+            return self.handle_error(
+                "Your request was not successful.",
+                [
+                    {
+                        "field": "none",
+                        "code": "google_callback",
+                        "message": str(error),
+                    }
+                ],
+            )
