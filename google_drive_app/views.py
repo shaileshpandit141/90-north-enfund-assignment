@@ -86,3 +86,53 @@ class GoogleDriveFileDetailView(BaseAPIView):
                     }
                 ],
             )
+
+
+class GoogleDriveFileUploadView(BaseAPIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request) -> Response:
+        """Upload a file to Google Drive using an access token."""
+        try:
+            access_token = request.headers.get("Authorization")
+            if not access_token:
+                raise Exception("Missing access token")
+
+            file_obj = request.FILES.get("file")
+            if not file_obj:
+                raise Exception("No file provided")
+
+            credentials = Credentials(token=access_token.replace("Bearer ", ""))
+            drive_service = build("drive", "v3", credentials=credentials)
+
+            # Upload file metadata
+            file_metadata = {"name": file_obj.name}
+
+            media = MediaIoBaseUpload(
+                file_obj, mimetype=file_obj.content_type, resumable=True
+            )
+
+            uploaded_file = (
+                drive_service.files()
+                .create(
+                    body=file_metadata,
+                    media_body=media,
+                    fields="id, name, webViewLink, webContentLink",
+                )
+                .execute()
+            )
+
+            return self.handle_success(
+                "File uploaded successfully.", {"file": uploaded_file}
+            )
+        except Exception as error:
+            return self.handle_error(
+                "File upload failed.",
+                [
+                    {
+                        "field": "none",
+                        "code": "google_drive",
+                        "message": str(error),
+                    }
+                ],
+            )
