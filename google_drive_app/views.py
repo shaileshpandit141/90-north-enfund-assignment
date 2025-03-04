@@ -122,9 +122,7 @@ class GoogleDriveFileUploadView(BaseAPIView):
                 .execute()
             )
 
-            return self.handle_success(
-                "File uploaded successfully.", {"file": uploaded_file}
-            )
+            return self.handle_success("File uploaded successfully.", uploaded_file)
         except Exception as error:
             return self.handle_error(
                 "File upload failed.",
